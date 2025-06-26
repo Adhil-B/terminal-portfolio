@@ -20,10 +20,6 @@ A retro-themed, animated terminal-style portfolio page built with pure HTML and 
 
 [Live Portfolio](https://adhil-b.github.io/terminal-portfolio/)
 
-### Demo Video
-
-<video src="terminal-portfolio.mp4" controls width="600"></video>
-
 ---
 
 ## 🛠️ Getting Started
