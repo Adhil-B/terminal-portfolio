@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal Profile</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #0d1117 100%);
+            color: #00ff41;
+            overflow: hidden;
+            height: 100vh;
+            position: relative;
+        }
+        
+        .matrix-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.1;
+            z-index: 0;
+            overflow: hidden;
+        }
+        
+        .matrix-char {
+            position: absolute;
+            color: #00ff41;
+            font-size: 14px;
+            animation: matrix-fall 8s linear infinite;
+        }
+        
+        .matrix-char:nth-child(1) { left: 5%; animation-delay: 0s; }
+        .matrix-char:nth-child(2) { left: 15%; animation-delay: 1s; }
+        .matrix-char:nth-child(3) { left: 25%; animation-delay: 2s; }
+        .matrix-char:nth-child(4) { left: 35%; animation-delay: 0.5s; }
+        .matrix-char:nth-child(5) { left: 45%; animation-delay: 1.5s; }
+        .matrix-char:nth-child(6) { left: 55%; animation-delay: 2.5s; }
+        .matrix-char:nth-child(7) { left: 65%; animation-delay: 0.3s; }
+        .matrix-char:nth-child(8) { left: 75%; animation-delay: 1.3s; }
+        .matrix-char:nth-child(9) { left: 85%; animation-delay: 2.3s; }
+        .matrix-char:nth-child(10) { left: 95%; animation-delay: 0.8s; }
+        
+        .terminal {
+            width: 800px;
+            height: 600px;
+            background: rgba(13, 17, 23, 0.95);
+            border: 2px solid #00ff41;
+            border-radius: 10px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 
+                0 0 50px rgba(0, 255, 65, 0.3),
+                inset 0 0 50px rgba(0, 255, 65, 0.1);
+            z-index: 1;
+            overflow: hidden;
+            animation: terminal-glow 3s ease-in-out infinite alternate;
+        }
+        
+        .terminal-header {
+            background: linear-gradient(90deg, #00ff41 0%, #39ff14 100%);
+            height: 30px;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            color: #000;
+            font-weight: bold;
+            position: relative;
+        }
+        
+        .terminal-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff5f56;
+            animation: btn-pulse 2s ease-in-out infinite;
+        }
+        
+        .btn:nth-child(2) { 
+            background: #ffbd2e; 
+            animation-delay: 0.3s;
+        }
+        .btn:nth-child(3) { 
+            background: #27ca3f; 
+            animation-delay: 0.6s;
+        }
+        
+        .terminal-title {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+        }
+        
+        .terminal-body {
+            height: calc(100% - 30px);
+            padding: 20px;
+            overflow-y: auto;
+            line-height: 1.4;
+        }
+        
+        .prompt {
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+        
+        .command {
+            color: #4ecdc4;
+        }
+        
+        .output {
+            color: #00ff41;
+            margin-bottom: 15px;
+        }
+        
+        .typing-text {
+            overflow: hidden;
+            white-space: nowrap;
+            animation: typing 2s steps(50, end);
+            animation-fill-mode: both;
+            width: 0;
+        }
+        
+        .typing-text::after {
+            content: '|';
+            color: #00ff41;
+            animation: 
+                blink-caret 1s step-end infinite,
+                hide-cursor 0s 2s forwards;
+        }
+        
+        .fade-in-delayed {
+            opacity: 0;
+            animation: fade-in 0.8s ease-in forwards;
+        }
+        
+        .slide-in-stats {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slide-in 1s ease-out forwards;
+        }
+        
+        .typing-text:nth-child(1) { animation-delay: 0.5s; }
+        .typing-text:nth-child(2) { animation-delay: 3s; }
+        .typing-text:nth-child(3) { animation-delay: 4.5s; }
+        .typing-text:nth-child(4) { animation-delay: 7s; }
+        .typing-text:nth-child(5) { animation-delay: 8.5s; }
+        .typing-text:nth-child(6) { animation-delay: 10s; }
+        .typing-text:nth-child(7) { animation-delay: 12s; }
+        .typing-text:nth-child(8) { animation-delay: 13.5s; }
+        .typing-text:nth-child(9) { animation-delay: 15s; }
+        .typing-text:nth-child(10) { animation-delay: 16.5s; }
+        .typing-text:nth-child(11) { animation-delay: 18s; }
+        .typing-text:nth-child(12) { animation-delay: 19.5s; }
+        .typing-text:nth-child(13) { animation-delay: 21s; }
+        .typing-text:nth-child(14) { animation-delay: 22.5s; }
+        .typing-text:nth-child(15) { animation-delay: 24s; }
+        .typing-text:nth-child(16) { animation-delay: 25.5s; }
+        .typing-text:nth-child(17) { animation-delay: 27s; }
+        .typing-text:nth-child(18) { animation-delay: 28.5s; }
+        .typing-text:nth-child(19) { animation-delay: 30s; }
+        .typing-text:nth-child(20) { animation-delay: 31.5s; }
+        
+        .fade-in-delayed:nth-of-type(1) { animation-delay: 10s; }
+        .slide-in-stats:nth-of-type(1) { animation-delay: 13.5s; }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 15px 0;
+        }
+        
+        .info-box {
+            border: 1px solid #00ff41;
+            padding: 10px;
+            border-radius: 5px;
+            background: rgba(0, 255, 65, 0.05);
+            animation: box-glow 2s ease-in-out infinite alternate;
+        }
+        
+        .tech-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 10px 0;
+            font-size: 12px;
+        }
+        
+        .tech-category {
+            color: #00ff41;
+            line-height: 1.4;
+        }
+        
+        .category-title {
+            color: #4ecdc4;
+            font-weight: bold;
+        }
+        
+        .loading-bar {
+            width: 100%;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 5px 0;
+        }
+        
+        .loading-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff41, #39ff14);
+            width: 0%;
+            animation: loading-fill 3s ease-in-out infinite;
+        }
+        
+        .cursor {
+            animation: cursor-blink 1s infinite;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00ff41;
+            animation: status-pulse 1.5s infinite;
+            margin-right: 5px;
+        }
+        
+        .ascii-art {
+            color: #4ecdc4;
+            font-size: 10px;
+            line-height: 1.1;
+            text-align: center;
+            margin: 15px 0;
+            font-family: 'JetBrains Mono', monospace;
+            white-space: pre;
+            animation: ascii-glow 4s ease-in-out infinite alternate;
+        }
+        
+        .highlight {
+            color: #ff6b6b;
+            font-weight: bold;
+            animation: highlight-pulse 2s ease-in-out infinite;
+        }
+        
+        .success {
+            color: #39ff14;
+        }
+        
+        .warning {
+            color: #ffbd2e;
+            animation: warning-flash 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes matrix-fall {
+            0% { transform: translateY(-100vh); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+        
+        @keyframes terminal-glow {
+            0% { box-shadow: 0 0 50px rgba(0, 255, 65, 0.3), inset 0 0 50px rgba(0, 255, 65, 0.1); }
+            100% { box-shadow: 0 0 80px rgba(0, 255, 65, 0.5), inset 0 0 50px rgba(0, 255, 65, 0.2); }
+        }
+        
+        @keyframes btn-pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(0.9); }
+        }
+        
+        @keyframes typing {
+            0% { width: 0; }
+            100% { width: 100%; }
+        }
+        
+        @keyframes blink-caret {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        @keyframes hide-cursor {
+            to { opacity: 0; }
+        }
+        
+        @keyframes fade-in {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slide-in {
+            0% { 
+                opacity: 0; 
+                transform: translateY(20px) scale(0.95); 
+            }
+            100% { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
+        }
+        
+        @keyframes cursor-blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        @keyframes loading-fill {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+        
+        @keyframes status-pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        @keyframes box-glow {
+            0% { border-color: #00ff41; }
+            100% { border-color: #39ff14; }
+        }
+        
+        @keyframes ascii-glow {
+            0% { text-shadow: 0 0 5px rgba(78, 205, 196, 0.5); }
+            100% { text-shadow: 0 0 15px rgba(78, 205, 196, 0.8); }
+        }
+        
+        @keyframes highlight-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        @keyframes warning-flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        /* New appear-instant animation for outputs */
+        .appear-instant {
+            opacity: 0;
+            animation: appear-instant 0.12s steps(1, end) forwards;
+        }
+        @keyframes appear-instant {
+            to { opacity: 1; }
+        }
+        .terminal-line {
+            display: flex;
+            align-items: baseline;
+            gap: 0.5ch;
+        }
+    </style>
+</head>
+<body>
+    <div class="matrix-bg">
+        <div class="matrix-char">A</div>
+        <div class="matrix-char">B</div>
+        <div class="matrix-char">1</div>
+        <div class="matrix-char">$</div>
+        <div class="matrix-char">X</div>
+        <div class="matrix-char">0</div>
+        <div class="matrix-char">#</div>
+        <div class="matrix-char">Z</div>
+        <div class="matrix-char">9</div>
+        <div class="matrix-char">@</div>
+    </div>
+    
+    <div class="terminal">
+        <div class="terminal-header">
+            <div class="terminal-buttons">
+                <div class="btn"></div>
+                <div class="btn"></div>
+                <div class="btn"></div>
+            </div>
+            <div class="terminal-title">adhil@github:~$ ./profile.sh</div>
+        </div>
+        
+        <div class="terminal-body">
+            <div class="ascii-art">
+    ██████╗ ██████╗  ██████╗ ███████╗██╗██╗     ███████╗
+    ██╔══██╗██╔══██╗██╔═══██╗██╔════╝██║██║     ██╔════╝
+    ██████╔╝██████╔╝██║   ██║█████╗  ██║██║     █████╗  
+    ██╔═══╝ ██╔══██╗██║   ██║██╔══╝  ██║██║     ██╔══╝  
+    ██║     ██║  ██║╚██████╔╝██║     ██║███████╗███████╗
+    ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝╚══════╝
+            </div>
+            
+            <div class="terminal-line">
+                <span class="prompt appear-instant" style="animation-delay: 0.5s;">adhil@github:~$</span>
+                <span class="typing-text" style="animation-delay: 0.8s;">
+                    <span class="command">whoami</span>
+                </span>
+            </div>
+            <div class="output appear-instant" style="animation-delay: 2.5s;">
+                <span class="highlight">Adhil Bijukumar</span> - Computer Science Engineer | Self-taught since age 12 | Currently 18 years old
+            </div>
+            
+            <div class="terminal-line">
+                <span class="prompt appear-instant" style="animation-delay: 3s;">adhil@github:~$</span>
+                <span class="typing-text" style="animation-delay: 3.3s;">
+                    <span class="command">cat /proc/skills</span>
+                </span>
+            </div>
+            <div class="output appear-instant" style="animation-delay: 5.1s;">
+                Loading skill matrix...
+                <div class="loading-bar"><div class="loading-progress"></div></div>
+            </div>
+            
+            <div class="terminal-line">
+                <span class="prompt appear-instant" style="animation-delay: 5.6s;">adhil@github:~$</span>
+                <span class="typing-text" style="animation-delay: 5.9s;">
+                    <span class="command">ls -la ~/tech_stack/</span>
+                </span>
+            </div>
+            <div class="output appear-instant" style="animation-delay: 7.7s;">
+                <div class="tech-grid">
+                    <div class="tech-category">
+                        <span class="category-title">Languages:</span><br>
+                        Python • JavaScript • TypeScript • C • PHP • HTML5 • CSS3
+                    </div>
+                    <div class="tech-category">
+                        <span class="category-title">Frameworks:</span><br>
+                        React • Node.js • Express • Next.js • Flask
+                    </div>
+                    <div class="tech-category">
+                        <span class="category-title">Databases:</span><br>
+                        MongoDB • PostgreSQL • MySQL • Supabase
+                    </div>
+                    <div class="tech-category">
+                        <span class="category-title">Cloud:</span><br>
+                        Firebase • Vercel • Heroku • Netlify • GCP
+                    </div>
+                    <div class="tech-category">
+                        <span class="category-title">DevOps:</span><br>
+                        Docker • Git • GitHub Actions • Raspberry Pi
+                    </div>
+                    <div class="tech-category">
+                        <span class="category-title">Tools:</span><br>
+                        Figma • Notion • Jellyfin • WireGuard
+                    </div>
+                </div>
+            </div>
+            
+            <div class="terminal-line">
+                <span class="prompt appear-instant" style="animation-delay: 8.2s;">adhil@github:~$</span>
+                <span class="typing-text" style="animation-delay: 8.5s;">
+                    <span class="command">curl -s api.github.com/users/me/stats</span>
+                </span>
+            </div>
+            <div class="output appear-instant" style="animation-delay: 10.3s;">
+                <div class="info-grid">
+                    <div class="info-box">
+                        <div><span class="status-indicator"></span><strong>Status:</strong> <span class="success">Online & Coding</span></div>
+                        <div><strong>Today:</strong> Wednesday, June 25, 2025</div>
+                        <div><strong>Local Time:</strong> 14:30:00</div>
+                    </div>
+                    <div class="info-box">
+                        <div><strong>Commits This Week:</strong> <span class="highlight">42</span></div>
+                        <div><strong>Coffee Consumed:</strong> <span class="warning">∞</span></div>
+                        <div><strong>Bugs Fixed:</strong> <span class="success">127</span></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="terminal-line">
+                <span class="prompt appear-instant" style="animation-delay: 10.8s;">adhil@github:~$</span>
+                <span class="typing-text" style="animation-delay: 11.1s;">
+                    <span class="command">echo $MOTIVATION</span>
+                </span>
+            </div>
+            <div class="output appear-instant" style="animation-delay: 12.8s;">
+                <span class="highlight">"Code is poetry, and every bug is just a misplaced verse."</span>
+            </div>
+            
+            <div class="terminal-line">
+                <span class="prompt appear-instant" style="animation-delay: 13.3s;">adhil@github:~$</span>
+                <span class="typing-text" style="animation-delay: 13.6s;">
+                    <span class="command">ps aux | grep passion</span>
+                </span>
+            </div>
+            <div class="output appear-instant" style="animation-delay: 15.3s;">
+                root     1337  99.9  0.1  coding   endless   ?   Rs   00:00  ∞:∞  /usr/bin/passion --learning --building --creating
+            </div>
+            
+            <div class="terminal-line">
+                <span class="prompt appear-instant" style="animation-delay: 15.8s;">adhil@github:~$</span>
+                <span class="typing-text" style="animation-delay: 16.1s;">
+                    <span class="command">tail -f /var/log/journey.log</span>
+                </span>
+            </div>
+            <div class="output appear-instant" style="animation-delay: 17.8s;">
+                [INFO] Started coding journey at age 12 in 6th grade<br>
+                [SUCCESS] Self-taught multiple programming languages<br>
+                [PROGRESS] Currently pursuing Computer Science Engineering<br>
+                [ACTIVE] Building projects and contributing to open source<br>
+                <span class="cursor">█</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
