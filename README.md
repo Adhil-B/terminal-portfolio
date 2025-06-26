@@ -32,15 +32,15 @@ A retro-themed, animated terminal-style portfolio page built with pure HTML and 
    cd terminal-portfolio
    ```
 2. **Open the portfolio:**
-   - Simply open `profile.html` in your web browser.
+   - Simply open `index.html` in your web browser.
 
 ---
 
 ## 🎨 Customization
 
-- Edit `profile.html` to update your name, skills, status, and other info.
+- Edit `index.html` to update your name, skills, status, and other info.
 - Change the ASCII art, commands, or add new sections as you like.
-- All styles are in the `<style>` tag at the top of `profile.html`.
+- All styles are in the `<style>` tag at the top of `index.html`.
 
 ---
 
