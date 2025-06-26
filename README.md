@@ -18,9 +18,11 @@ A retro-themed, animated terminal-style portfolio page built with pure HTML and 
 
 ## 🚀 Demo
 
-![Demo Screenshot](demo.png)
+[Live Portfolio](https://adhil-b.github.io/terminal-portfolio/)
 
-*Add a screenshot or GIF of your portfolio here!*
+### Demo Video
+
+<video src="terminal-portfolio.mp4" controls width="600"></video>
 
 ---
 
@@ -63,4 +65,4 @@ A retro-themed, animated terminal-style portfolio page built with pure HTML and 
 
 ## 📄 License
 
-[MIT](LICENSE) *(or specify your license here)* 
+[MIT](LICENSE)
